@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // <--- 1. Імпортуємо бібліотеку
+
 // Стилі підтягуються автоматично з index.css, імпортувати їх тут не обов'язково,
 // якщо вони глобальні.
 
@@ -7,30 +9,49 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
 
     try {
-      const userData = await mockAuthService(email, password);
-      
-      localStorage.setItem('token', userData.token);
-      localStorage.setItem('role', userData.role);
+      // 2. Запит на сервер
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (userData.role === 'admin') {
-        navigate('/admin-dashboard');
-      } else {
-        navigate('/user-profile');
+      const data = await response.json();
+
+      setLoading(false)
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Помилка входу');
       }
+
+      // 3. Отримуємо токен
+      const token = data.token;
+      
+      // 4. Розкодовуємо токен, щоб дізнатись, хто це
+      const decodedUser = jwtDecode(token);
+      
+      // decodedUser тепер виглядає як: { userId: "...", role: "admin", exp: 173... }
+      console.log("Дані з токена:", decodedUser);
+
+      // 5. Зберігаємо токен
+      localStorage.setItem('token', token);
+      
+      // (Опціонально) Можна зберегти роль окремо для зручності, 
+      // але краще завжди брати з токена
+      localStorage.setItem('role', decodedUser.role);
+
+      navigate('/profile');
+
     } catch (err) {
-      setError('Невірний логін або пароль');
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
@@ -47,7 +68,7 @@ const Login = () => {
               className="form-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@test.com"
+              placeholder="youremail@mail.com"
               required
             />
           </div>
@@ -73,22 +94,6 @@ const Login = () => {
       </div>
     </div>
   );
-};
-
-// Mock API виніс униз, щоб не заважав читати код компонента.
-// В ідеалі це має бути в окремому файлі services/authService.js
-const mockAuthService = (email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (email === 'admin@test.com' && password === 'admin') {
-        resolve({ token: 'abc-123-admin', role: 'admin' });
-      } else if (email === 'user@test.com' && password === 'user') {
-        resolve({ token: 'xyz-789-user', role: 'user' });
-      } else {
-        reject(new Error('Invalid credentials'));
-      }
-    }, 1000);
-  });
 };
 
 export default Login;
