@@ -10,7 +10,7 @@ import './App.css'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/salary-calc-system'>
       <Routes>
         <Route path="/login" element={<Login/>} />
         {/* <Route path="/counter" element={<Counter />} /> */}

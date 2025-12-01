@@ -1,6 +1,6 @@
 {
-  "name": "salary-calc-system",
-  "homepage": "https://khmtmrt.github.io/salary-calc-system",
+  "name": "frontend",
+  "homepage": "https://khmtmrt.github.io/salary-calc-system/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
