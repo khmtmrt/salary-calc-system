@@ -10,12 +10,12 @@ import './App.css'
 
 function App() {
   return (
-    <BrowserRouter basename='/salary-calc-system'>
+    <BrowserRouter basename='/salary-calc-system/'>
       <Routes>
-        <Route path="/login" element={<Login/>} />
+        <Route path="*" element={<Login/>} />
         {/* <Route path="/counter" element={<Counter />} /> */}
         
-        <Route element={<ProtectedRoute allowedRoles={['user', 'admin']} />}>
+        <Route element={<ProtectedRoute allowedRoles={['user', 'admin', 'manager', 'accountant']} />}>
           <Route path="/profile" element={<Profile />} />
         </Route>
 
