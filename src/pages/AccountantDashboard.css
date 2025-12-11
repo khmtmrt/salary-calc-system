@@ -47,24 +47,36 @@
 }
 
 /* Ліва колонка: Список співробітників */
+/* Ліва колонка: Список співробітників */
 .users-list-card {
   flex: 1 1 300px;
   min-width: 280px;
-  height: fit-content;
-  max-height: calc(100vh - 4rem);
-  overflow-y: auto;
+  /* height: fit-content; <--- ЦЕЙ РЯДОК МОЖЕ КОНФЛІКТУВАТИ З МАКС. ВИСОТОЮ, МОЖНА ЗАЛИШИТИ, АЛЕ КРАЩЕ ПОКЛАДАТИСЯ НА max-height */
+  max-height: calc(100vh - 4rem); /* Достатньо висоти екрану мінус шапка та відступи */
+  /* overflow-y: auto; <--- ВИДАЛИТИ/ЗАКОМЕНТУВАТИ ТУТ */
   position: sticky;
   top: 2rem;
-  padding-right: 0.5rem;
+  padding-right: 0.5rem; /* Зменшуємо, щоб компенсувати width скролбару */
   max-width: 100%;
-  border-radius: 16px; /* Закруглення */
-  overflow: hidden;
+  border-radius: 16px; 
+  /* overflow: hidden; <--- ВИДАЛИТИ/ЗАКОМЕНТУВАТИ ЦЕЙ РЯДОК, ЯКЩО ВІН КОНФЛІКТУЄ З overflow-y: auto */
+  /* Оновлено: краще залишити overflow: hidden у цьому блоці, 
+     щоб закрити прокрутку для самої картки, а скрол застосувати до внутрішнього елемента.
+     Це дозволяє краще контролювати стилізацію. */
 }
 
 .users-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+    /* === КЛЮЧОВІ ЗМІНИ ДЛЯ ПРОКРУТКИ === */
+    height: calc(100vh - 120px); /* Встановлюємо фіксовану висоту, 
+                                    щоб вміст перевищував її (120px - це приклад 
+                                    для шапки картки та відступів) */
+    overflow-y: auto; /* Додаємо прокрутку по вертикалі */
+    padding-right: 1rem; /* Додайте відступ, щоб контент не "прилипав" до скролбару */
+    /* ================================== */
 }
 
 .user-item {
@@ -203,12 +215,17 @@
 }
 
 /* Картка історії */
+/* Картка історії */
 .history-card {
   flex: 1 1 400px;
   min-width: 300px;
   overflow-x: auto;
-  max-height: 80vh;
-  overflow-y: auto;
+  
+  /* === КЛЮЧОВІ ЗМІНИ ДЛЯ ПРОКРУТКИ === */
+  max-height: 80vh; /* Обмеження висоти */
+  overflow-y: auto; /* Додаємо прокрутку по вертикалі */
+  /* ================================== */
+  
   max-width: 100%;
   border-radius: 16px;
 }
@@ -218,7 +235,7 @@
   border-bottom: 1px solid #eee;
   padding-bottom: 0.5rem;
   position: sticky;
-  top: 0;
+  top: 0; /* Це змушує його "прилипати" до верху .history-card */
   background: white;
   z-index: 2;
   margin-top: 0;
